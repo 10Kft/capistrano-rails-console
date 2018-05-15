@@ -13,7 +13,7 @@ namespace :rails do
   # Default values
   console_env = fetch(:rails_env, fetch(:stage, 'production'))
   console_user = fetch(:app_user, nil)
-  console_roles = fetch(:console_role, :app)
+  console_role = fetch(:console_role, :app)
   console_shell = fetch(:console_shell, nil)
 
 
