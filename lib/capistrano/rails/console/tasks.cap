@@ -1,12 +1,12 @@
-namespace :load do
-  task :defaults do
-    # Add rails to RVM, Rbenv and Chruby bins
-    %i{rvm_map_bins rbenv_map_bins chruby_map_bins}.each do |bins_var|
-        bins = fetch(bins_var, [])
-        set bins_var, bins.push('rails') unless bins.include?('rails')
-    end
-  end
-end
+# namespace :load do
+#   task :defaults do
+#     # Add rails to RVM, Rbenv and Chruby bins
+#     %i{rvm_map_bins rbenv_map_bins chruby_map_bins}.each do |bins_var|
+#         bins = fetch(bins_var, [])
+#         set bins_var, bins.push('rails') unless bins.include?('rails')
+#     end
+#   end
+# end
 
 namespace :rails do
 
@@ -17,15 +17,14 @@ namespace :rails do
   console_shell = fetch(:console_shell, nil)
 
   desc 'Interact with a remote rails console'
-  task :console do
-    on roles(console_role) do
-      args  = []
-      args << '--sandbox' if ENV.key?('sandbox') || ENV.key?('s')
-      run_interactively primary(console_role), shell: console_shell do
-        within current_path do
-          as user: console_user do
-            execute(:rails, :console, '-e', console_env, *args)
-          end
+  task :console, :roles => fetch(:console_role, :app) do
+    puts "Console role set to #{console_role}"
+    args  = []
+    args << '--sandbox' if ENV.key?('sandbox') || ENV.key?('s')
+    run_interactively primary(console_role), shell: console_shell do
+      within current_path do
+        as user: console_user do
+          execute(:rails, :console, '-e', console_env, *args)
         end
       end
     end
@@ -33,12 +32,10 @@ namespace :rails do
 
   desc 'Interact with a remote rails dbconsole'
   task :dbconsole do
-    on roles(console_role) do
-      run_interactively primary(console_role), shell: console_shell do
-        within current_path do
-          as user: console_user do
-            execute(:rails, :dbconsole, '-p', '-e', console_env)
-          end
+    run_interactively primary(console_role), shell: console_shell do
+      within current_path do
+        as user: console_user do
+          execute(:rails, :dbconsole, '-p', '-e', console_env)
         end
       end
     end
