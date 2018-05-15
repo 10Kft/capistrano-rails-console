@@ -21,7 +21,6 @@ namespace :rails do
   task :console do
     args  = []
     args << '--sandbox' if ENV.key?('sandbox') || ENV.key?('s')
-    on roles() do
     run_interactively primary(console_role), shell: console_shell do
       within current_path do
         as user: console_user do
