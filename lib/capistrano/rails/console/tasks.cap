@@ -13,28 +13,32 @@ namespace :rails do
   # Default values
   console_env = fetch(:rails_env, fetch(:stage, 'production'))
   console_user = fetch(:app_user, nil)
-  console_role = [].concat([fetch(:console_role, :app)])
+  console_role = fetch(:console_role, :app)
   console_shell = fetch(:console_shell, nil)
 
   desc 'Interact with a remote rails console'
-  task :console, :roles => console_role do
-    args  = []
-    args << '--sandbox' if ENV.key?('sandbox') || ENV.key?('s')
-    run_interactively primary(console_role), shell: console_shell do
-      within current_path do
-        as user: console_user do
-          execute(:rails, :console, '-e', console_env, *args)
+  task :console do
+    on roles(console_role) do
+      args  = []
+      args << '--sandbox' if ENV.key?('sandbox') || ENV.key?('s')
+      run_interactively primary(console_role), shell: console_shell do
+        within current_path do
+          as user: console_user do
+            execute(:rails, :console, '-e', console_env, *args)
+          end
         end
       end
     end
   end
 
   desc 'Interact with a remote rails dbconsole'
-  task :dbconsole, :roles => console_role do
-    run_interactively primary(console_role), shell: console_shell do
-      within current_path do
-        as user: console_user do
-          execute(:rails, :dbconsole, '-p', '-e', console_env)
+  task :dbconsole do
+    on roles(console_role) do
+      run_interactively primary(console_role), shell: console_shell do
+        within current_path do
+          as user: console_user do
+            execute(:rails, :dbconsole, '-p', '-e', console_env)
+          end
         end
       end
     end
