@@ -5,16 +5,17 @@ namespace :load do
         bins = fetch(bins_var, [])
         set bins_var, bins.push('rails') unless bins.include?('rails')
     end
-
-    # Default values
-    set :console_env,   -> { fetch(:rails_env, fetch(:stage, 'production')) }
-    set :console_user,  -> { fetch(:app_user, nil) }
-    set :console_role,  :app
-    set :console_shell, nil
   end
 end
 
 namespace :rails do
+
+  # Default values
+  set :console_env,   -> { fetch(:rails_env, fetch(:stage, 'production')) }
+  set :console_user,  -> { fetch(:app_user, nil) }
+  set :console_role,  -> { fetch(:console_role, :app) }
+  set :console_shell, -> { fetch(:console_shell, nil) }
+
   desc 'Interact with a remote rails console'
   task :console do
     args  = []
